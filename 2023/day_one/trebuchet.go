@@ -26,7 +26,7 @@ func isDigit(x byte) bool {
 }
 
 // uses sliding window technique
-func calcSum(lines *[][]byte) int {
+func CalcSum(lines *[][]byte) int {
 	sum := 0
 	maxWinLen := 5 // window can't exceed this length if number is in words
 	for _, line := range *lines {
@@ -70,7 +70,12 @@ func main() {
 		return
 	}
 
-	sum := calcSum(&lines)
-	fmt.Printf("Sum of numbers in the file: %d\n", sum)
+	sum, err := utils.ExecuteAndLogTime(CalcSum, &lines)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	fmt.Printf("Sum: %d\n", sum)
 }
 
