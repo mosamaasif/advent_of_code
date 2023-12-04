@@ -6,9 +6,11 @@ import (
 	"strconv"
 )
 
+//--------------------------- CONSTS ---------------------------//
 const FILE_NAME string = "input.txt"
 // this is to find and map words to numbers
 var NUMBER_MAP 	map[string]int = map[string]int {
+	"zero"	:	0,
 	"one"	: 	1,
 	"two"	: 	2,
 	"three"	: 	3,
@@ -19,25 +21,48 @@ var NUMBER_MAP 	map[string]int = map[string]int {
 	"eight"	: 	8,
 	"nine"	: 	9,
 }
+//--------------------------------------------------------------//
 
+
+//--------------------------- HELPERS ---------------------------//
 // finds ascii digits fron byte values
 func isDigit(x byte) bool {
 	return x >= '0' && x <= '9'
 }
 
 func updateDigits(firstDigit *int, lastDigit *int, val int) {
-	if *firstDigit == 0 {
+	if *firstDigit == -1 {
 		*firstDigit = val
 	}
 	*lastDigit = val
 }
+//---------------------------------------------------------------//
 
-// uses sliding window technique
-func CalcSum(lines *[][]byte) int {
+
+//--------------------------- DRIVER FUNCS ---------------------------//
+// O(n x m)
+func CalcSumPartOne(lines *[][]byte) int {
+	sum := 0
+	for _, line := range *lines {
+		firstDigit, lastDigit := -1, -1
+		for _, x := range line {
+			if isDigit(x) {
+				num, _ := strconv.Atoi(string(x))
+				updateDigits(&firstDigit, &lastDigit, num)
+			}
+		}
+		sum += firstDigit * 10 + lastDigit
+	}
+
+	return sum
+}
+
+// uses sliding window technique (O(n x m))
+func CalcSumPartTwo(lines *[][]byte) int {
 	sum := 0
 	maxWinLen := 5 // window can't exceed this length if number is in words
 	for _, line := range *lines {
-		firstDigit, lastDigit := 0, 0
+		firstDigit, lastDigit := -1, -1
 		lineLen := len(line)
 		for winSt, winEnd := 0, 0; winSt < lineLen; winSt++ {
 			winEnd = winSt
@@ -63,6 +88,8 @@ func CalcSum(lines *[][]byte) int {
 
 	return sum
 }
+//--------------------------------------------------------------------//
+
 
 func main() {
 	lines, err := utils.ReadFileByLineBytes(FILE_NAME)
@@ -71,12 +98,18 @@ func main() {
 		return
 	}
 
-	sum, err := utils.ExecuteAndLogTime(CalcSum, &lines)
+	sumOne, err := utils.ExecuteAndLogTime(CalcSumPartOne, &lines)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
+	fmt.Printf("Sum Part 1: %d\n", sumOne)
 
-	fmt.Printf("Sum: %d\n", sum)
+	sumTwo, err := utils.ExecuteAndLogTime(CalcSumPartTwo, &lines)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	fmt.Printf("Sum Part 2: %d\n", sumTwo)
 }
 
