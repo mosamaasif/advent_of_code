@@ -25,37 +25,38 @@ func isDigit(x byte) bool {
 	return x >= '0' && x <= '9'
 }
 
+func updateDigits(firstDigit *int, lastDigit *int, val int) {
+	if *firstDigit == 0 {
+		*firstDigit = val
+	}
+	*lastDigit = val
+}
+
 // uses sliding window technique
 func CalcSum(lines *[][]byte) int {
 	sum := 0
 	maxWinLen := 5 // window can't exceed this length if number is in words
 	for _, line := range *lines {
 		firstDigit, lastDigit := 0, 0
-		winSt, winEnd, lenLine := 0, 0, len(line)
-		for winSt < lenLine {
+		lineLen := len(line)
+		for winSt, winEnd := 0, 0; winSt < lineLen; winSt++ {
+			winEnd = winSt
+			
 			// if starting index contains a number, just use that as is and continue
 			if isDigit(line[winSt]) {
 				num, _ := strconv.Atoi(string(line[winSt]))
-				if firstDigit == 0 {
-					firstDigit = num
-				}
-				lastDigit = num
-			// else use sliding window to find the word if possible
-			} else {
-				for winEnd < lenLine && winEnd - winSt < maxWinLen {
-					if val, ok := NUMBER_MAP[string(line[winSt:winEnd + 1])]; ok {
-						if firstDigit == 0 {
-							firstDigit = val
-						}
-						lastDigit = val
-						break
-					}
-					winEnd++
-				}
+				updateDigits(&firstDigit, &lastDigit, num)
+				continue
 			}
-			// move window forward and reset size
-			winSt++
-			winEnd = winSt
+
+			// else use sliding window to find the word if possible
+			for winEnd < lineLen && winEnd - winSt < maxWinLen {
+				if val, ok := NUMBER_MAP[string(line[winSt:winEnd + 1])]; ok {
+					updateDigits(&firstDigit, &lastDigit, val)
+					break
+				}
+				winEnd++
+			}
 		}
 		sum += firstDigit * 10 + lastDigit
 	}
