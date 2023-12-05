@@ -3,6 +3,7 @@ package main
 import (
 	"Advent_of_Code/utils"
 	"fmt"
+	"os"
 	"strconv"
 )
 
@@ -92,7 +93,13 @@ func CalcSumPartTwo(lines *[][]byte) int {
 
 
 func main() {
-	lines, err := utils.ReadFileByLineBytes(FILE_NAME)
+	if len(os.Args) < 2 {
+		fmt.Println("Provide a filename cmd line args")
+		return
+	}
+
+	fileName := os.Args[1]
+	lines, err := utils.ReadFileByLineBytes(fileName)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
@@ -112,4 +119,3 @@ func main() {
 	}
 	fmt.Printf("Sum Part 2: %d\n", sumTwo)
 }
-
