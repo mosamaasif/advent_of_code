@@ -5,18 +5,18 @@ import (
 	"testing"
 )
 
-func TestSumPartOne(t *testing.T) {
-	lines, err := utils.ReadFileByLine("test.txt")
+func TestPartOne(t *testing.T) {
+	lines, err := utils.ReadFileByLine("test_part_one.txt")
 	if err != nil {
-		t.Errorf("%s", err.Error())
+		t.Errorf(err.Error())
 		return
 	}
 	maxBallsMap := map[string]int { "red": 12, "green": 13, "blue": 14 }
 
-	get := CalcSumPartOne(&lines, &maxBallsMap)
-	want := 8
+	calculatedSum := CalcSumPartOne(&lines, &maxBallsMap)
+	requiredSum := 8
 
-	if get != want {
-		t.Errorf("Calculated Sum: %d does not match required sum: %d", get, want)
+	if calculatedSum != requiredSum {
+		t.Errorf("Calculated Sum: %d is not equal to required sum: %d", calculatedSum, requiredSum)
 	}
 }
