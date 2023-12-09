@@ -6,7 +6,7 @@ import (
 )
 
 func TestPartOne(t *testing.T) {
-	lines, err := utils.ReadFileByLineBytes("test_part_one.txt")
+	lines, err := utils.ReadFileByLineBytes("test_input_part_one.txt")
 	if err != nil {
 		t.Errorf(err.Error())
 		return
@@ -21,7 +21,7 @@ func TestPartOne(t *testing.T) {
 }
 
 func TestPartTwo(t *testing.T) {
-	lines, err := utils.ReadFileByLineBytes("test_part_two.txt")
+	lines, err := utils.ReadFileByLineBytes("test_input_part_two.txt")
 	if err != nil {
 		t.Errorf(err.Error())
 		return
