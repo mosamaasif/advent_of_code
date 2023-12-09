@@ -12,7 +12,8 @@ func TestPartOne(t *testing.T) {
 		return
 	}
 
-	calculatedSum := CalcSumPartOne(&lines, 12, 13, 14)
+	parsedData := parseData(&lines)
+	calculatedSum := CalcSumPartOne(&parsedData, 12, 13, 14)
 	requiredSum := 8
 
 	if calculatedSum != requiredSum {
@@ -27,7 +28,8 @@ func TestPartTwo(t *testing.T) {
 		return
 	}
 
-	calculatedSum := CalcSumPartTwo(&lines)
+	parsedData := parseData(&lines)
+	calculatedSum := CalcSumPartTwo(&parsedData)
 	requiredSum := 2286
 
 	if calculatedSum != requiredSum {
