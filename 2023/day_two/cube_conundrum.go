@@ -38,10 +38,9 @@ func parseData(lines *[]string) []map[string]int {
 
 
 // --------------------------- DRIVER FUNCS ---------------------------//
-func CalcSumPartOne(lines *[]string, redLimit int, greenLimit int, blueLimit int) int {
+func CalcSumPartOne(data *[]map[string]int, redLimit int, greenLimit int, blueLimit int) int {
 	sum := 0
-	parsedData := parseData(lines)
-	for idx, colorMap := range parsedData {
+	for idx, colorMap := range *data {
 		if colorMap["red"] <= redLimit && colorMap["green"] <= greenLimit && colorMap["blue"] <= blueLimit {
 			sum += idx + 1
 		}
@@ -49,10 +48,9 @@ func CalcSumPartOne(lines *[]string, redLimit int, greenLimit int, blueLimit int
 	return sum
 }
 
-func CalcSumPartTwo(lines *[]string) int {
+func CalcSumPartTwo(data *[]map[string]int) int {
 	sum := 0
-	parsedData := parseData(lines)
-	for _, colorMap := range parsedData {
+	for _, colorMap := range *data {
 		sum += colorMap["red"] * colorMap["green"] * colorMap["blue"]
 	}
 	return sum
@@ -71,17 +69,27 @@ func main() {
 		fmt.Println(err.Error())
 		return
 	}
+	
+	parseResult, err := utils.ExecuteAndLogTime(parseData, &lines)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	parsedData, ok := parseResult.([]map[string]int)
+	if !ok {
+		fmt.Println("Failed to parse data")
+		return
+	}
 
 	maxR, maxG, maxB := strToInt(&os.Args[2]), strToInt(&os.Args[3]), strToInt(&os.Args[4])
-
-	sumOne, err := utils.ExecuteAndLogTime(CalcSumPartOne, &lines, maxR, maxG, maxB)
+	sumOne, err := utils.ExecuteAndLogTime(CalcSumPartOne, &parsedData, maxR, maxG, maxB)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
 	fmt.Printf("Sum Part 1: %d\n", sumOne)
 
-	sumTwo, err := utils.ExecuteAndLogTime(CalcSumPartTwo, &lines)
+	sumTwo, err := utils.ExecuteAndLogTime(CalcSumPartTwo, &parsedData)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
