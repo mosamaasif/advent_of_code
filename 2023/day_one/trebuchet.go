@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"unicode"
 )
 
 //--------------------------- CONSTS ---------------------------//
@@ -26,11 +27,6 @@ var NUMBER_MAP 	map[string]int = map[string]int {
 
 
 //--------------------------- HELPERS ---------------------------//
-// finds ascii digits fron byte values
-func isDigit(x byte) bool {
-	return x >= '0' && x <= '9'
-}
-
 func updateDigits(firstDigit *int, lastDigit *int, val int) {
 	if *firstDigit == -1 {
 		*firstDigit = val
@@ -41,14 +37,13 @@ func updateDigits(firstDigit *int, lastDigit *int, val int) {
 
 
 //--------------------------- DRIVER FUNCS ---------------------------//
-// O(n x m)
-func CalcSumPartOne(lines *[][]byte) int {
+func CalcSumPartOne(lines *[]string) int {
 	sum := 0
 	for _, line := range *lines {
 		firstDigit, lastDigit := -1, -1
-		for _, x := range line {
-			if isDigit(x) {
-				num, _ := strconv.Atoi(string(x))
+		for _, r := range line {
+			if unicode.IsDigit(r) {
+				num, _ := strconv.Atoi(string(r))
 				updateDigits(&firstDigit, &lastDigit, num)
 			}
 		}
@@ -58,8 +53,7 @@ func CalcSumPartOne(lines *[][]byte) int {
 	return sum
 }
 
-// uses sliding window technique (O(n x m))
-func CalcSumPartTwo(lines *[][]byte) int {
+func CalcSumPartTwo(lines *[]string) int {
 	sum := 0
 	maxWinLen := 5 // window can't exceed this length if number is in words
 	for _, line := range *lines {
@@ -69,9 +63,13 @@ func CalcSumPartTwo(lines *[][]byte) int {
 			winEnd = winSt
 			
 			// if starting index contains a number, just use that as is and continue
-			if isDigit(line[winSt]) {
-				num, _ := strconv.Atoi(string(line[winSt]))
-				updateDigits(&firstDigit, &lastDigit, num)
+			if unicode.IsDigit(rune(line[winSt])) {
+				numStr := string(line[winSt])
+				if num, err := utils.StrToInt(&numStr); err != nil {
+					fmt.Println(err.Error())
+				} else {
+					updateDigits(&firstDigit, &lastDigit, num)
+				}
 				continue
 			}
 
@@ -99,7 +97,7 @@ func main() {
 	}
 
 	fileName := os.Args[1]
-	lines, err := utils.ReadFileByLineBytes(fileName)
+	lines, err := utils.ReadFileByLine(fileName)
 	if err != nil {
 		fmt.Println(err.Error())
 		return

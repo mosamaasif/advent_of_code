@@ -5,19 +5,9 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"strconv"
 )
 
 // --------------------------- HELPERS ---------------------------//
-func strToInt(s *string) int {
-	num, err := strconv.Atoi(*s)
-	if err != nil {
-		fmt.Println(err.Error())
-		return -1
-	}
-	return num
-}
-
 // parses each line and stores a map of max count for r,g,b balls for each game
 func parseData(lines *[]string) []map[string]int {
 	data := make([]map[string]int, len(*lines))
@@ -26,8 +16,10 @@ func parseData(lines *[]string) []map[string]int {
 		parsedLine := regexp.MustCompile("[,;:]\\s").Split(line, -1)
 		for j := 1; j < len(parsedLine); j++ {
 			ballSlice := regexp.MustCompile("\\s").Split(parsedLine[j], -1)
-			color, count := ballSlice[1], strToInt(&ballSlice[0])
-			if count > data[i][color] {
+			color := ballSlice[1]
+			if count, err := utils.StrToInt(&ballSlice[0]); err != nil {
+				fmt.Println(err.Error())
+			} else if count > data[i][color] {
 				data[i][color] = count
 			}
 		}
@@ -63,13 +55,29 @@ func main() {
 		return
 	}
 
-	fileName := os.Args[1]
-	lines, err := utils.ReadFileByLine(fileName)
+	// parsing cmd line args
+	lines, err := utils.ReadFileByLine(os.Args[1])
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	maxR, err := utils.StrToInt(&os.Args[2])
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	maxG, err := utils.StrToInt(&os.Args[3])
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	maxB, err := utils.StrToInt(&os.Args[4])
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
 	
+	// performing sum calcs
 	parseResult, err := utils.ExecuteAndLogTime(parseData, &lines)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -81,7 +89,6 @@ func main() {
 		return
 	}
 
-	maxR, maxG, maxB := strToInt(&os.Args[2]), strToInt(&os.Args[3]), strToInt(&os.Args[4])
 	sumOne, err := utils.ExecuteAndLogTime(CalcSumPartOne, &parsedData, maxR, maxG, maxB)
 	if err != nil {
 		fmt.Println(err.Error())
