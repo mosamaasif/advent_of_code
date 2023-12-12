@@ -37,7 +37,7 @@ func updateDigits(firstDigit *int, lastDigit *int, val int) {
 
 
 //--------------------------- DRIVER FUNCS ---------------------------//
-func CalcSumPartOne(lines *[]string) int {
+func calcSumPartOne(lines *[]string) int {
 	sum := 0
 	for _, line := range *lines {
 		firstDigit, lastDigit := -1, -1
@@ -53,7 +53,7 @@ func CalcSumPartOne(lines *[]string) int {
 	return sum
 }
 
-func CalcSumPartTwo(lines *[]string) int {
+func calcSumPartTwo(lines *[]string) int {
 	sum := 0
 	maxWinLen := 5 // window can't exceed this length if number is in words
 	for _, line := range *lines {
@@ -103,14 +103,14 @@ func main() {
 		return
 	}
 
-	sumOne, err := utils.ExecuteAndLogTime(CalcSumPartOne, &lines)
+	sumOne, err := utils.ExecuteAndLogTime(calcSumPartOne, &lines)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
 	fmt.Printf("Sum Part 1: %d\n", sumOne)
 
-	sumTwo, err := utils.ExecuteAndLogTime(CalcSumPartTwo, &lines)
+	sumTwo, err := utils.ExecuteAndLogTime(calcSumPartTwo, &lines)
 	if err != nil {
 		fmt.Println(err.Error())
 		return

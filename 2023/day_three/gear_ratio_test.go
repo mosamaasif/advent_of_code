@@ -12,7 +12,8 @@ func TestOnePartOne(t *testing.T) {
 		return
 	}
 
-	calculatedSum := CalcSumPartOne(&lines)
+	parseData := parseData(&lines)
+	calculatedSum := calcSumPartOne(&parseData)
 	requiredSum := 4361
 
 	if calculatedSum != requiredSum {
@@ -27,8 +28,25 @@ func TestTwoPartOne(t *testing.T) {
 		return
 	}
 
-	calculatedSum := CalcSumPartOne(&lines)
+	parseData := parseData(&lines)
+	calculatedSum := calcSumPartOne(&parseData)
 	requiredSum := 925
+
+	if calculatedSum != requiredSum {
+		t.Errorf("Calculated Sum: %d is not equal to required Sum: %d", calculatedSum, requiredSum)
+	}
+}
+
+func TestPartTwo(t *testing.T) {
+	lines, err := utils.ReadFileByLine("test_input_part_two.txt")
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
+
+	parseData := parseData(&lines)
+	calculatedSum := calcSumPartTwo(&parseData)
+	requiredSum := 467835
 
 	if calculatedSum != requiredSum {
 		t.Errorf("Calculated Sum: %d is not equal to required Sum: %d", calculatedSum, requiredSum)
