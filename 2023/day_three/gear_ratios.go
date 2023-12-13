@@ -8,13 +8,12 @@ import (
 )
 
 type part struct {
-	x int
-	y int
-	symbol rune
+	Symbol rune
+	AdjacentNumbers []int
 }
 
 // --------------------------- HELPERS ---------------------------//
-func adjacentSymbol(numStIdx int, numEndIdx int, lineNum int, lines *[]string) part {
+func adjacentSymbol(numStIdx int, numEndIdx int, lineNum int, lines *[]string) (utils.Point, rune) {
 	startLine, endLine := max(0, lineNum - 1), min(len(*lines) - 1, lineNum + 1)
 	linesToCheck := (*lines)[startLine:endLine + 1]
 	// will loop 2 time min (2 lines), and 3 time max (3 lines)
@@ -24,17 +23,17 @@ func adjacentSymbol(numStIdx int, numEndIdx int, lineNum int, lines *[]string) p
 		// will loop for digits in num + 2, basically to check surrounding areas of the number
 		for runeIdx, r := range lineSlice {
 			if r != '.' && !unicode.IsDigit(r) {
-				return part{startRuneIdx + runeIdx, startLine + lineIdx, r}
+				return utils.Point{X: startRuneIdx + runeIdx, Y: startLine + lineIdx}, r
 			}
 		}
 	}
-	return part{-1, -1, 0}
+	return utils.Point{X: -1, Y: -1}, 0
 }
 
-func parseData(lines *[]string) map[part][]int {
+func parseData(lines *[]string) map[utils.Point]part {
 	// each key stores data for adjacent part found with symbol and it's position
 	// and each value is a list of numbers adjacent to that part
-	data := make(map[part][]int)
+	data := make(map[utils.Point]part)
 	for lineNum, line := range *lines {
 		// loops until end of line
 		for runeIdx := 0; runeIdx < len(line); runeIdx++ {
@@ -45,8 +44,8 @@ func parseData(lines *[]string) map[part][]int {
 			}
 			numEndIdx := runeIdx - 1
 			// if no digit/number found and is not adjacent to a symbol
-			p := adjacentSymbol(numStIdx, numEndIdx, lineNum, lines)
-			if numEndIdx - numStIdx < 0 || p.symbol == 0 {
+			point, r := adjacentSymbol(numStIdx, numEndIdx, lineNum, lines)
+			if numEndIdx - numStIdx < 0 || r == 0 {
 				continue
 			}
 			numStr := line[numStIdx:numEndIdx + 1]
@@ -55,7 +54,13 @@ func parseData(lines *[]string) map[part][]int {
 				fmt.Println(err.Error())
 			} else if number >= 0 {
 				// add this to the list
-				data[p] = append(data[p], number)
+				if val, ok := data[point]; ok {
+					val.AdjacentNumbers = append(val.AdjacentNumbers, number)
+					data[point] = val
+				} else {
+					newPart := part{Symbol: r, AdjacentNumbers: []int{number}}
+					data[point] = newPart
+				}
 			}
 		}
 	}
@@ -65,24 +70,24 @@ func parseData(lines *[]string) map[part][]int {
 
 
 // --------------------------- DRIVER FUNCS ---------------------------//
-func calcSumPartOne(data *map[part][]int) int {
+func calcSumPartOne(data *map[utils.Point]part) int {
 	sum := 0
-	for _, numbers := range *data {
-		for _, number := range numbers {
+	for _, part := range *data {
+		for _, number := range part.AdjacentNumbers {
 			sum += number
 		}
 	}
 	return sum
 }
 
-func calcSumPartTwo(data *map[part][]int) int {
+func calcSumPartTwo(data *map[utils.Point]part) int {
 	sum := 0
-	for part, numbers := range *data {
-		if part.symbol != '*' || len(numbers) < 2 {
+	for _, part := range *data {
+		if part.Symbol != '*' || len(part.AdjacentNumbers) < 2 {
 			continue
 		}
 		ratio := 1
-		for _, number := range numbers {
+		for _, number := range part.AdjacentNumbers {
 			ratio *= number
 		}
 		sum += ratio
@@ -110,7 +115,7 @@ func main() {
 		fmt.Println(err.Error())
 		return
 	}
-	parsedData, ok := parseResult.(map[part][]int)
+	parsedData, ok := parseResult.(map[utils.Point]part)
 	if !ok {
 		fmt.Println("Failed to parse data")
 		return
