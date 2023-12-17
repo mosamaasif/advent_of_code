@@ -50,12 +50,11 @@ func parseData(lines *[]string) ([][]int, error) {
 	return data, nil
 }
 
-func findClosestLocation(mapsData *[][]int) int {
+func findClosestLocationForSeeds(seeds *[]int, mapsData *[][]int) int {
 	closestLoc := math.MaxInt
-	seeds := (*mapsData)[0]
-	for _, seed := range seeds {
+	for _, seed := range *seeds {
 		sourceVal := seed
-		for mapIdx := 1; mapIdx < len(*mapsData); mapIdx++ {
+		for mapIdx := 0; mapIdx < len(*mapsData); mapIdx++ {
 			mapData := (*mapsData)[mapIdx]
 			for i := 0; i < len(mapData); i += 3 {
 				destSt := mapData[i]
@@ -73,9 +72,25 @@ func findClosestLocation(mapsData *[][]int) int {
 	return closestLoc
 }
 
-func calcSumPartTwo(matchingCounts *[][]int) int {
-	sum := 0
-	return sum
+func findClosestLocationPartOne(mapsData *[][]int) int {
+	mappings := (*mapsData)[1:]
+	return findClosestLocationForSeeds(&(*mapsData)[0], &mappings)
+}
+
+func findClosestLocationPartTwo(mapsData *[][]int) int {
+	closestLoc := math.MaxInt
+	seedData := (*mapsData)[0]
+	mappings := (*mapsData)[1:]
+	for seedIdx := 0; seedIdx < len(seedData); seedIdx += 2 {
+		seedSt := seedData[seedIdx]
+		seedsRange := seedData[seedIdx + 1]
+		seeds := []int{}
+		for seedVal := seedSt; seedVal < seedSt + seedsRange; seedVal++ {
+			seeds = append(seeds, seedVal)
+		}
+		closestLoc = min(closestLoc, findClosestLocationForSeeds(&seeds, &mappings))
+	}
+	return closestLoc
 }
 
 func main() {
@@ -102,17 +117,17 @@ func main() {
 		return
 	}
 
-	closestLoc, err := utils.ExecuteAndLogTime(findClosestLocation, &parsedData)
+	closestLocOne, err := utils.ExecuteAndLogTime(findClosestLocationPartOne, &parsedData)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
-	fmt.Printf("Location Part 1: %d\n", closestLoc)
+	fmt.Printf("Location Part 1: %d\n", closestLocOne)
 
-	// sumTwo, err := utils.ExecuteAndLogTime(calcSumPartTwo, &parsedData)
-	// if err != nil {
-	// 	fmt.Println(err.Error())
-	// 	return
-	// }
-	// fmt.Printf("Sum Part 2: %d\n", sumTwo)
+	closestLocTwo, err := utils.ExecuteAndLogTime(findClosestLocationPartTwo, &parsedData)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	fmt.Printf("Location Part 2: %d\n", closestLocTwo)
 }

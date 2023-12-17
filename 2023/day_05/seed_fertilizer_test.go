@@ -18,7 +18,7 @@ func TestPartOne(t *testing.T) {
 		return
 	}
 
-	calculatedLoc := findClosestLocation(&parseData)
+	calculatedLoc := findClosestLocationPartOne(&parseData)
 	requiredLoc := 35
 
 	if calculatedLoc != requiredLoc {
@@ -26,18 +26,23 @@ func TestPartOne(t *testing.T) {
 	}
 }
 
-// func TestPartTwo(t *testing.T) {
-// 	lines, err := utils.ReadFileByLine("test_input_part_two.txt")
-// 	if err != nil {
-// 		t.Errorf(err.Error())
-// 		return
-// 	}
+func TestPartTwo(t *testing.T) {
+	lines, err := utils.ReadFileByLine("test_input_part_two.txt")
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
 
-// 	parseData := parseData(&lines)
-// 	calculatedSum := calcSumPartTwo(&parseData)
-// 	requiredSum := 30
+	parseData, err := parseData(&lines)
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
 
-// 	if calculatedSum != requiredSum {
-// 		t.Errorf("Calculated Sum: %d is not equal to required Sum: %d", calculatedSum, requiredSum)
-// 	}
-// }
+	calculatedLoc := findClosestLocationPartTwo(&parseData)
+	requiredLoc := 46
+
+	if calculatedLoc != requiredLoc {
+		t.Errorf("Calculated Location: %d is not equal to required Location: %d", calculatedLoc, requiredLoc)
+	}
+}
