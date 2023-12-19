@@ -9,6 +9,9 @@ import (
 	"strings"
 )
 
+//TODO: This is kinda a brute force method, it still goes through each seed, need to use interval for seeds too!!
+
+
 func mapRange(oldValue int, oldMin int, oldMax int, newMin int, newMax int) int {
 	newValue := 0
 	oldRange := oldMax - oldMin
