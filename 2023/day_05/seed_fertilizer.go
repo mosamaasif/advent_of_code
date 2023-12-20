@@ -11,7 +11,7 @@ import (
 
 //TODO: This is kinda a brute force method, it still goes through each seed, need to use interval for seeds too!!
 
-
+// --------------------------- HELPERS ---------------------------//
 func mapRange(oldValue int, oldMin int, oldMax int, newMin int, newMax int) int {
 	newValue := 0
 	oldRange := oldMax - oldMin
@@ -74,7 +74,10 @@ func findClosestLocationForSeeds(seeds *[]int, mapsData *[][]int) int {
 	}
 	return closestLoc
 }
+//---------------------------------------------------------------//
 
+
+// --------------------------- DRIVER FUNCS ---------------------------//
 func findClosestLocationPartOne(mapsData *[][]int) int {
 	mappings := (*mapsData)[1:]
 	return findClosestLocationForSeeds(&(*mapsData)[0], &mappings)
@@ -95,6 +98,8 @@ func findClosestLocationPartTwo(mapsData *[][]int) int {
 	}
 	return closestLoc
 }
+//--------------------------------------------------------------------//
+
 
 func main() {
 	if len(os.Args) < 2 {

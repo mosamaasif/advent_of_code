@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// --------------------------- HELPERS ---------------------------//
 func isLineSplitRune(r rune) bool {
 	return r == ':' || r == '|'
 }
@@ -34,7 +35,10 @@ func parseData(lines *[]string) []int {
 	}
 	return matchingCounts
 }
+//---------------------------------------------------------------//
 
+
+// --------------------------- DRIVER FUNCS ---------------------------//
 func calcSumPartOne(matchingCounts *[]int) int {
 	sum := 0
 	for _, matchingCount := range *matchingCounts {
@@ -68,6 +72,8 @@ func calcSumPartTwo(matchingCounts *[]int) int {
 	}
 	return sum
 }
+//--------------------------------------------------------------------//
+
 
 func main() {
 	if len(os.Args) < 2 {
